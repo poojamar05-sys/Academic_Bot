@@ -1,8 +1,17 @@
 import sqlite3
 import os
+import tempfile
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "academic.db")
+DB_DIRECTORY = (
+    tempfile.gettempdir()
+    if os.getenv("VERCEL")
+    else BASE_DIR
+)
+DB_PATH = os.path.join(
+    DB_DIRECTORY,
+    os.getenv("DATABASE_FILENAME", "academic.db")
+)
 
 
 def get_connection():

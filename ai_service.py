@@ -10,12 +10,7 @@ MODEL = os.getenv(
     "openai/gpt-oss-20b"
 )
 
-if not API_KEY:
-    raise RuntimeError(
-        "GROQ_API_KEY is missing from .env"
-    )
-
-client = Groq(api_key=API_KEY)
+client = Groq(api_key=API_KEY) if API_KEY else None
 
 BRAILLE_MAP = {
     "a": "⠁", "b": "⠃", "c": "⠉", "d": "⠙", "e": "⠑",
@@ -41,6 +36,11 @@ BRAILLE_MAP = {
 # ============================================================
 
 def ask_groq(system_prompt, user_prompt):
+
+    if client is None:
+        raise RuntimeError(
+            "GROQ_API_KEY is not configured."
+        )
 
     response = client.chat.completions.create(
         model=MODEL,
