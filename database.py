@@ -1,45 +1,107 @@
+
 import sqlite3
 import os
 import shutil
 import tempfile
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SOURCE_DB_PATH = os.path.join(BASE_DIR, "academic.db")
-if os.getenv("VERCEL") and os.path.exists(SOURCE_DB_PATH):
-    DB_PATH = SOURCE_DB_PATH
-else:
-    DB_DIRECTORY = (
-        tempfile.gettempdir()
-        if os.getenv("VERCEL")
-        else BASE_DIR
-    )
-    DB_PATH = os.path.join(
-        DB_DIRECTORY,
-        os.getenv("DATABASE_FILENAME", "academic.db")
-    )
 
+# ============================================================
+# DATABASE PATH
+# ============================================================
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# academic.db must be inside the same folder as database.py
+SOURCE_DB_PATH = os.path.join(
+    BASE_DIR,
+    "academic.db"
+)
+
+# Vercel filesystem is read-only except /tmp.
+if os.getenv("VERCEL"):
+    DB_PATH = os.path.join(
+        tempfile.gettempdir(),
+        "academic.db"
+    )
+else:
+    DB_PATH = SOURCE_DB_PATH
+
+
+# ============================================================
+# PREPARE DATABASE
+# ============================================================
 
 def prepare_database():
-    if (
-        os.getenv("VERCEL")
-        and os.path.exists(SOURCE_DB_PATH)
-        and not os.path.exists(DB_PATH)
-    ):
-        shutil.copyfile(SOURCE_DB_PATH, DB_PATH)
 
+    # --------------------------------------------------------
+    # VERCEL
+    # --------------------------------------------------------
+
+    if os.getenv("VERCEL"):
+
+        if not os.path.exists(SOURCE_DB_PATH):
+            raise FileNotFoundError(
+                "academic.db was not found in the deployment."
+            )
+
+        # Copy database to writable /tmp location
+        if not os.path.exists(DB_PATH):
+
+            shutil.copy2(
+                SOURCE_DB_PATH,
+                DB_PATH
+            )
+
+        return
+
+    # --------------------------------------------------------
+    # LOCAL
+    # --------------------------------------------------------
+
+    return
+
+
+# ============================================================
+# CONNECTION
+# ============================================================
 
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
+
+    prepare_database()
+
+    conn = sqlite3.connect(
+        DB_PATH,
+        timeout=10
+    )
+
     conn.row_factory = sqlite3.Row
+
     return conn
 
 
+# ============================================================
+# INITIALIZE DATABASE
+# ============================================================
+
 def init_database():
-    if os.getenv("VERCEL") and os.path.exists(SOURCE_DB_PATH):
+
+    # If the database already exists,
+    # don't recreate it.
+    if os.path.exists(SOURCE_DB_PATH):
+
+        # On Vercel, just prepare the writable copy.
+        if os.getenv("VERCEL"):
+
+            prepare_database()
+
         return
 
-    prepare_database()
-    conn = get_connection()
+    # --------------------------------------------------------
+    # LOCAL DATABASE CREATION
+    # --------------------------------------------------------
+
+    conn = sqlite3.connect(DB_PATH)
+
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -114,8 +176,12 @@ def init_database():
     ]
 
     for subject in subjects:
+
         cursor.execute(
-            "INSERT OR IGNORE INTO subjects (name) VALUES (?)",
+            """
+            INSERT OR IGNORE INTO subjects (name)
+            VALUES (?)
+            """,
             (subject,)
         )
 
@@ -123,7 +189,12 @@ def init_database():
     conn.close()
 
 
+# ============================================================
+# SUBJECTS
+# ============================================================
+
 def get_subjects():
+
     conn = get_connection()
 
     rows = conn.execute("""
@@ -134,10 +205,18 @@ def get_subjects():
 
     conn.close()
 
-    return [dict(row) for row in rows]
+    return [
+        dict(row)
+        for row in rows
+    ]
 
+
+# ============================================================
+# UNITS
+# ============================================================
 
 def get_units(subject_name):
+
     conn = get_connection()
 
     row = conn.execute("""
@@ -147,7 +226,9 @@ def get_units(subject_name):
     """, (subject_name,)).fetchone()
 
     if not row:
+
         conn.close()
+
         return []
 
     units = conn.execute("""
@@ -159,10 +240,21 @@ def get_units(subject_name):
 
     conn.close()
 
-    return [dict(unit) for unit in units]
+    return [
+        dict(unit)
+        for unit in units
+    ]
 
 
-def get_topics(subject_name, unit_number):
+# ============================================================
+# TOPICS
+# ============================================================
+
+def get_topics(
+    subject_name,
+    unit_number
+):
+
     conn = get_connection()
 
     rows = conn.execute("""
@@ -171,19 +263,36 @@ def get_topics(subject_name, unit_number):
             t.topic_code,
             t.topic_name
         FROM topics t
-        JOIN units u ON t.unit_id = u.id
-        JOIN subjects s ON u.subject_id = s.id
+        JOIN units u
+            ON t.unit_id = u.id
+        JOIN subjects s
+            ON u.subject_id = s.id
         WHERE s.name = ?
         AND u.unit_number = ?
         ORDER BY t.topic_code
-    """, (subject_name, unit_number)).fetchall()
+    """, (
+        subject_name,
+        unit_number
+    )).fetchall()
 
     conn.close()
 
-    return [dict(row) for row in rows]
+    return [
+        dict(row)
+        for row in rows
+    ]
 
 
-def get_topic(subject_name, unit_number, topic_code):
+# ============================================================
+# GET TOPIC
+# ============================================================
+
+def get_topic(
+    subject_name,
+    unit_number,
+    topic_code
+):
+
     conn = get_connection()
 
     row = conn.execute("""
@@ -192,23 +301,37 @@ def get_topic(subject_name, unit_number, topic_code):
             t.topic_code,
             t.topic_name
         FROM topics t
-        JOIN units u ON t.unit_id = u.id
-        JOIN subjects s ON u.subject_id = s.id
+        JOIN units u
+            ON t.unit_id = u.id
+        JOIN subjects s
+            ON u.subject_id = s.id
         WHERE s.name = ?
         AND u.unit_number = ?
         AND t.topic_code = ?
-    """, (subject_name, unit_number, topic_code)).fetchone()
+    """, (
+        subject_name,
+        unit_number,
+        topic_code
+    )).fetchone()
 
     conn.close()
 
     return dict(row) if row else None
 
 
+# ============================================================
+# CHUNKS
+# ============================================================
+
 def get_chunks(topic_id):
+
     conn = get_connection()
 
     rows = conn.execute("""
-        SELECT id, page_number, content
+        SELECT
+            id,
+            page_number,
+            content
         FROM chunks
         WHERE topic_id = ?
         ORDER BY page_number, id
@@ -216,10 +339,21 @@ def get_chunks(topic_id):
 
     conn.close()
 
-    return [dict(row) for row in rows]
+    return [
+        dict(row)
+        for row in rows
+    ]
 
 
-def clear_unit(subject_name, unit_number):
+# ============================================================
+# CLEAR UNIT
+# ============================================================
+
+def clear_unit(
+    subject_name,
+    unit_number
+):
+
     conn = get_connection()
 
     subject = conn.execute("""
@@ -229,7 +363,9 @@ def clear_unit(subject_name, unit_number):
     """, (subject_name,)).fetchone()
 
     if not subject:
+
         conn.close()
+
         return
 
     unit = conn.execute("""
@@ -237,54 +373,92 @@ def clear_unit(subject_name, unit_number):
         FROM units
         WHERE subject_id = ?
         AND unit_number = ?
-    """, (subject["id"], unit_number)).fetchone()
+    """, (
+        subject["id"],
+        unit_number
+    )).fetchone()
 
     if unit:
+
         topic_rows = conn.execute("""
-            SELECT id FROM topics WHERE unit_id = ?
+            SELECT id
+            FROM topics
+            WHERE unit_id = ?
         """, (unit["id"],)).fetchall()
 
         for topic in topic_rows:
+
             conn.execute(
-                "DELETE FROM chunks WHERE topic_id = ?",
+                """
+                DELETE FROM chunks
+                WHERE topic_id = ?
+                """,
                 (topic["id"],)
             )
 
             conn.execute(
-                "DELETE FROM question_bank WHERE topic_id = ?",
+                """
+                DELETE FROM question_bank
+                WHERE topic_id = ?
+                """,
                 (topic["id"],)
             )
 
         conn.execute(
-            "DELETE FROM topics WHERE unit_id = ?",
+            """
+            DELETE FROM topics
+            WHERE unit_id = ?
+            """,
             (unit["id"],)
         )
 
         conn.execute(
-            "DELETE FROM units WHERE id = ?",
+            """
+            DELETE FROM units
+            WHERE id = ?
+            """,
             (unit["id"],)
         )
 
     conn.commit()
+
     conn.close()
 
 
-def save_unit(subject_name, unit_number, pdf_path, topics_data):
+# ============================================================
+# SAVE UNIT
+# ============================================================
+
+def save_unit(
+    subject_name,
+    unit_number,
+    pdf_path,
+    topics_data
+):
+
     conn = get_connection()
 
     subject = conn.execute("""
-        SELECT id FROM subjects WHERE name = ?
+        SELECT id
+        FROM subjects
+        WHERE name = ?
     """, (subject_name,)).fetchone()
 
     if not subject:
+
         conn.close()
+
         return None
 
     cursor = conn.cursor()
 
     cursor.execute("""
         INSERT OR REPLACE INTO units
-        (subject_id, unit_number, pdf_path)
+        (
+            subject_id,
+            unit_number,
+            pdf_path
+        )
         VALUES (?, ?, ?)
     """, (
         subject["id"],
@@ -305,9 +479,14 @@ def save_unit(subject_name, unit_number, pdf_path, topics_data):
     unit_id = unit["id"]
 
     for topic in topics_data:
+
         cursor.execute("""
             INSERT OR REPLACE INTO topics
-            (unit_id, topic_code, topic_name)
+            (
+                unit_id,
+                topic_code,
+                topic_name
+            )
             VALUES (?, ?, ?)
         """, (
             unit_id,
@@ -316,12 +495,21 @@ def save_unit(subject_name, unit_number, pdf_path, topics_data):
         ))
 
     conn.commit()
+
     conn.close()
 
     return unit_id
 
 
-def get_topic_id(unit_id, topic_code):
+# ============================================================
+# GET TOPIC ID
+# ============================================================
+
+def get_topic_id(
+    unit_id,
+    topic_code
+):
+
     conn = get_connection()
 
     row = conn.execute("""
@@ -329,19 +517,35 @@ def get_topic_id(unit_id, topic_code):
         FROM topics
         WHERE unit_id = ?
         AND topic_code = ?
-    """, (unit_id, topic_code)).fetchone()
+    """, (
+        unit_id,
+        topic_code
+    )).fetchone()
 
     conn.close()
 
     return row["id"] if row else None
 
 
-def save_chunk(topic_id, page_number, content):
+# ============================================================
+# SAVE CHUNK
+# ============================================================
+
+def save_chunk(
+    topic_id,
+    page_number,
+    content
+):
+
     conn = get_connection()
 
     conn.execute("""
         INSERT INTO chunks
-        (topic_id, page_number, content)
+        (
+            topic_id,
+            page_number,
+            content
+        )
         VALUES (?, ?, ?)
     """, (
         topic_id,
@@ -350,15 +554,31 @@ def save_chunk(topic_id, page_number, content):
     ))
 
     conn.commit()
+
     conn.close()
 
 
-def save_question(topic_id, question, question_type="2-mark", answer=None):
+# ============================================================
+# SAVE QUESTION
+# ============================================================
+
+def save_question(
+    topic_id,
+    question,
+    question_type="2-mark",
+    answer=None
+):
+
     conn = get_connection()
 
     conn.execute("""
         INSERT INTO question_bank
-        (topic_id, question, question_type, answer)
+        (
+            topic_id,
+            question,
+            question_type,
+            answer
+        )
         VALUES (?, ?, ?, ?)
     """, (
         topic_id,
@@ -368,4 +588,5 @@ def save_question(topic_id, question, question_type="2-mark", answer=None):
     ))
 
     conn.commit()
+
     conn.close()
