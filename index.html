@@ -1,0 +1,3638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Academic AI Bot</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #800020;
+            --primary-dark: #5f0018;
+            --primary-light: #f8e9ee;
+            --text: #171717;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f7f7f8;
+            --white: #ffffff;
+            --success: #16803c;
+        }
+
+        body {
+            font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ==============================
+           HEADER
+        ============================== */
+
+        .header {
+            height: 74px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: 19px;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--success);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        /* ==============================
+           MAIN
+        ============================== */
+
+        .container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0 60px;
+        }
+
+        .hero {
+            margin-bottom: 30px;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            line-height: 1.08;
+            letter-spacing: -1.5px;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            max-width: 720px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* ==============================
+           SELECTION CARD
+        ============================== */
+
+        .selection-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .select-wrap {
+            position: relative;
+        }
+
+        select {
+            width: 100%;
+            height: 50px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0 42px 0 14px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            background: white;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            transition: .2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(128,0,32,.08);
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--muted);
+        }
+
+        /* ==============================
+           MODE CARDS
+        ============================== */
+
+        .mode-title {
+            margin: 30px 0 15px;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .mode-card {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: white;
+            padding: 23px;
+            cursor: pointer;
+            text-align: left;
+            transition: .2s ease;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 30px rgba(128,0,32,.10);
+        }
+
+        .mode-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .mode-card h3 {
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .mode-card p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .voice-panel {
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 22px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 28px rgba(128,0,32,.08);
+        }
+
+        .voice-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .voice-panel h2 {
+            font-size: clamp(20px, 3vw, 28px);
+            letter-spacing: -.5px;
+        }
+
+        .voice-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .voice-button-large {
+            min-width: 200px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .transcript-box {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            min-height: 56px;
+            color: #374151;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .shortcut-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .shortcut-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ==============================
+           CONTENT AREA
+        ============================== */
+
+        .content-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            margin-top: 24px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .content-card.active {
+            display: block;
+        }
+
+        .content-header {
+            padding: 22px 26px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .content-header h2 {
+            font-size: 18px;
+        }
+
+        .topic-label {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .content-body {
+            padding: 28px;
+            min-height: 280px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 220px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #eee;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ==============================
+           MARKDOWN CONTENT
+        ============================== */
+
+        .answer {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .answer h1 {
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+
+        .answer h2 {
+            font-size: 19px;
+            margin: 25px 0 10px;
+            color: var(--primary);
+        }
+
+        .answer h3 {
+            font-size: 16px;
+            margin: 20px 0 8px;
+        }
+
+        .answer p {
+            margin: 8px 0;
+        }
+
+        .answer ul,
+        .answer ol {
+            padding-left: 25px;
+            margin: 8px 0;
+        }
+
+        .answer li {
+            margin: 5px 0;
+        }
+
+        .answer strong {
+            font-weight: 800;
+        }
+
+        .sources {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* ==============================
+           ACTION BUTTONS
+        ============================== */
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 11px;
+            height: 43px;
+            padding: 0 16px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* ==============================
+           PRACTICE
+        ============================== */
+
+        .practice-screen {
+            text-align: center;
+            padding: 25px 10px;
+        }
+
+        .mic-circle {
+            width: 105px;
+            height: 105px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 10px auto 20px;
+            border: 7px solid white;
+            box-shadow: 0 0 0 1px var(--border);
+        }
+
+        .mic-circle.listening {
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(128,0,32,.30);
+            }
+
+            70% {
+                box-shadow: 0 0 0 25px rgba(128,0,32,0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(128,0,32,0);
+            }
+        }
+
+        .practice-status {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .practice-progress {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .voice-button {
+            min-width: 180px;
+        }
+
+
+        /* ==============================
+           IMPROVED VOICE PRACTICE
+        ============================== */
+
+        .practice-question-card,
+        .voice-caption-box,
+        .evaluation-card {
+            text-align: left;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            margin: 14px 0;
+        }
+
+        .practice-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .practice-question {
+            font-size: 17px;
+            line-height: 1.55;
+            font-weight: 700;
+            color: #202124;
+        }
+
+        .voice-caption {
+            min-height: 48px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+        .voice-caption.interim {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .evaluation-card {
+            margin-top: 18px;
+        }
+
+        .evaluation-score {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .evaluation-row {
+            margin-top: 12px;
+        }
+
+        .evaluation-row strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .evaluation-row p {
+            margin: 0;
+            line-height: 1.5;
+            color: #4b5563;
+        }
+
+        .practice-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .voice-button.listening {
+            animation: pulseButton 1.2s infinite;
+        }
+
+        .voice-button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulseButton {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* ==============================
+           ERROR
+        ============================== */
+
+        .error {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #9f1239;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media(max-width: 800px) {
+
+            .header {
+                padding: 0 16px;
+                height: auto;
+                min-height: 74px;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .status {
+                display: none;
+            }
+
+            .container {
+                width: min(100% - 20px, 700px);
+                padding-top: 28px;
+            }
+
+            .selection-grid,
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .selection-card {
+                padding: 20px;
+            }
+
+            .content-body {
+                padding: 20px;
+            }
+
+            .voice-panel {
+                padding: 18px 16px;
+            }
+
+            .voice-button-large,
+            .btn,
+            .mode-card {
+                min-height: 48px;
+                width: 100%;
+            }
+
+            .voice-actions {
+                width: 100%;
+            }
+
+            .shortcut-chip {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🎓
+        </div>
+
+        <div>
+            <div class="brand-title">
+                Academic AI Bot
+            </div>
+
+            <div class="brand-subtitle">
+                CSE Learning & Examination Assistant
+            </div>
+        </div>
+
+    </div>
+
+    <div class="status">
+
+        <span class="status-dot"></span>
+
+        AI System Ready
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+
+        <div class="hero-label">
+            ✦ PDF-Grounded Academic Learning
+        </div>
+
+        <h1>
+            Learn smarter.<br>
+            <span>Prepare better.</span>
+        </h1>
+
+        <p>
+            Select your subject, unit and topic.
+            Learn concepts, generate semester-ready
+            14-mark notes, or practice through a
+            voice-based AI viva.
+        </p>
+
+    </section>
+
+    <section class="voice-panel" aria-labelledby="voice-assistant-title">
+        <div class="voice-panel-header">
+            <div>
+                <div class="hero-label">🎤 Voice Assistant</div>
+                <h2 id="voice-assistant-title">Ask by voice</h2>
+            </div>
+
+            <div class="voice-actions">
+                <button class="btn btn-primary voice-button-large" id="startVoiceBtn" type="button" aria-label="Start voice assistant">
+                    🎙️ Start Voice Study Session
+                </button>
+                <button class="btn btn-secondary voice-button-large" id="stopVoiceBtn" type="button" aria-label="Stop audio playback">
+                    ⏹️ Stop Audio
+                </button>
+            </div>
+        </div>
+
+        <div id="voiceTranscript" class="transcript-box" aria-live="polite">
+            Speak a question such as: “Explain virtualization in simple words” or “Open notes”.
+        </div>
+
+        <div class="shortcut-row" aria-label="Keyboard shortcuts">
+            <span class="shortcut-chip">Alt + H = Home</span>
+            <span class="shortcut-chip">Alt + L = Learn</span>
+            <span class="shortcut-chip">Alt + N = Notes</span>
+            <span class="shortcut-chip">Alt + P = Practice</span>
+            <span class="shortcut-chip">Alt + A = Ask AI</span>
+            <span class="shortcut-chip">Alt + M = Microphone</span>
+            <span class="shortcut-chip">Alt + S = Stop Speech</span>
+            <span class="shortcut-chip">Alt + B = Braille</span>
+        </div>
+    </section>
+
+
+    <!-- ============================
+         SELECTION
+    ============================= -->
+
+    <section class="selection-card">
+
+        <div class="section-title">
+            📚 Select your study material
+        </div>
+
+        <div class="selection-grid">
+
+            <!-- SUBJECT -->
+
+            <div class="field">
+
+                <label for="subject">
+                    Subject
+                </label>
+
+                <div class="select-wrap">
+
+                    <select id="subject">
+
+                        <option value="">
+                            Select Subject
+                        </option>
+
+                    </select>
+
+                    <span class="select-arrow">
+                        ▼
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- UNIT -->
+
+            <div class="field">
+
+                <label for="unit">
+                    Unit
+                </label>
+
+                <div class="select-wrap">
+
+                    <select
+                        id="unit"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select Unit
+                        </option>
+
+                    </select>
+
+                    <span class="select-arrow">
+                        ▼
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOPIC -->
+
+            <div class="field">
+
+                <label for="topic">
+                    Topic
+                </label>
+
+                <div class="select-wrap">
+
+                    <select
+                        id="topic"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select Topic
+                        </option>
+
+                    </select>
+
+                    <span class="select-arrow">
+                        ▼
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="mode-title">
+            What do you want to do?
+        </div>
+
+
+        <div class="mode-grid">
+
+            <button
+                class="mode-card"
+                onclick="openLearn()"
+            >
+
+                <div class="mode-icon">
+                    📖
+                </div>
+
+                <h3>
+                    Learn
+                </h3>
+
+                <p>
+                    Understand the selected topic
+                    in simple language with examples,
+                    analogies and quick checks.
+                </p>
+
+            </button>
+
+
+            <button
+                class="mode-card"
+                onclick="openNotes()"
+            >
+
+                <div class="mode-icon">
+                    📝
+                </div>
+
+                <h3>
+                    Notes
+                </h3>
+
+                <p>
+                    Generate a structured
+                    semester-ready 14-mark answer
+                    from your study material.
+                </p>
+
+            </button>
+
+
+            <button
+                class="mode-card"
+                onclick="openPractice()"
+            >
+
+                <div class="mode-icon">
+                    🎙️
+                </div>
+
+                <h3>
+                    Practice
+                </h3>
+
+                <p>
+                    Practice the topic through a
+                    completely voice-based AI viva.
+                </p>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================
+         CONTENT
+    ============================= -->
+
+    <section
+        id="contentCard"
+        class="content-card"
+    >
+
+        <div class="content-header">
+
+            <div>
+
+                <div
+                    id="contentTopic"
+                    class="topic-label"
+                >
+                    Topic
+                </div>
+
+                <h2 id="contentTitle">
+                    Academic AI
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="contentBody"
+            class="content-body"
+        >
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    // ==========================================
+    // GLOBAL STATE
+    // ==========================================
+
+    const subjectSelect =
+        document.getElementById("subject");
+
+    const unitSelect =
+        document.getElementById("unit");
+
+    const topicSelect =
+        document.getElementById("topic");
+
+    const contentCard =
+        document.getElementById("contentCard");
+
+    const contentBody =
+        document.getElementById("contentBody");
+
+    const contentTitle =
+        document.getElementById("contentTitle");
+
+    const contentTopic =
+        document.getElementById("contentTopic");
+
+
+    let currentMode = "";
+    let practiceQuestion = "";
+    let practiceQuestionNumber = 0;
+    let practiceScore = 0;
+    let practiceTotal = 0;
+
+    let recognition = null;
+    let isListening = false;
+    let speechSpeed = 1.0;
+    let currentUtterance = null;
+    let voiceConversationActive = false;
+    let voiceConversationStep = "";
+    let voiceReadResult = false;
+    let voicePracticeSession = false;
+    let voiceResultText = "";
+    let speechRunId = 0;
+    let stopWatcher = null;
+
+    // ==========================================
+    // ACCESSIBILITY + VOICE
+    // ==========================================
+
+    function updateVoiceTranscript(text) {
+        const el = document.getElementById("voiceTranscript");
+        if (el) {
+            el.textContent = text || "No transcript yet.";
+        }
+    }
+
+    function handleVoiceCommand(commandText) {
+        const text = String(commandText || "").trim().toLowerCase();
+        if (!text) return;
+
+        const normalized = text.replace(/\s+/g, " ");
+        updateVoiceTranscript(`You said: "${commandText}"`);
+
+        if (/^(stop|stop speaking|stop speech|be quiet|cancel)$/i.test(normalized)) {
+            stopAllVoice("Speech and listening stopped.");
+            return;
+        }
+
+        if (normalized.includes("go to learn") || normalized.includes("open learn")) {
+            openLearn();
+            return;
+        }
+
+        if (normalized.includes("go to notes") || normalized.includes("open notes")) {
+            openNotes();
+            return;
+        }
+
+        if (normalized.includes("start practice") || normalized.includes("open practice")) {
+            openPractice();
+            return;
+        }
+
+        if (normalized.includes("go home") || normalized.includes("home page")) {
+            document.querySelector(".hero")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            return;
+        }
+
+        if (normalized.includes("ask ai") || normalized.includes("ask a question")) {
+            askAIFromVoice();
+            return;
+        }
+
+        if (normalized.includes("read this") || normalized.includes("read answer")) {
+            readCurrentAnswer();
+            return;
+        }
+
+        if (normalized.includes("stop reading") || normalized.includes("stop speech")) {
+            stopSpeech();
+            return;
+        }
+
+        if (normalized.includes("repeat") || normalized.includes("explain again")) {
+            readCurrentAnswer();
+            return;
+        }
+
+        if (normalized.includes("show braille") || normalized.includes("braille view") || normalized.includes("connect braille") || normalized.includes("braille shortcut")) {
+            toggleBrailleView();
+            return;
+        }
+
+        if (normalized.includes("explain simply") || normalized.includes("simplify")) {
+            if (!validateSelection()) return;
+            askAIFromVoice("Explain this more simply.");
+            return;
+        }
+
+        if (normalized.includes("give an example") || normalized.includes("example")) {
+            if (!validateSelection()) return;
+            askAIFromVoice("Give me a real-world example related to this topic.");
+            return;
+        }
+
+        if (normalized.includes("summarize") || normalized.includes("summary")) {
+            if (!validateSelection()) return;
+            askAIFromVoice("Summarize this topic in simple words.");
+            return;
+        }
+
+        if (!validateSelection()) {
+            updateVoiceTranscript("Please select a subject, unit, and topic before asking the AI a question.");
+            return;
+        }
+
+        askAIFromVoice(commandText);
+    }
+
+    function speakText(text, options = {}) {
+        if (!("speechSynthesis" in window)) {
+            updateVoiceTranscript("Speech synthesis is not supported in this browser.");
+            return;
+        }
+
+        const spokenText = String(text || "").replace(/\s+/g, " ").trim();
+        if (!spokenText) return;
+
+        const runId = ++speechRunId;
+        window.speechSynthesis.cancel();
+        currentUtterance = new SpeechSynthesisUtterance(spokenText);
+        currentUtterance.rate = Number(options.rate || speechSpeed || 1.0);
+        currentUtterance.pitch = Number(options.pitch || 1);
+        currentUtterance.volume = Number(options.volume || 1);
+        currentUtterance.lang = "en-US";
+        currentUtterance.onend = function () {
+            stopStopWatcher();
+            if (runId === speechRunId && typeof options.onEnd === "function") options.onEnd();
+        };
+        startStopWatcher();
+        window.speechSynthesis.speak(currentUtterance);
+        updateVoiceTranscript(`Playing audio: ${spokenText}`);
+    }
+
+    function stopSpeech() {
+        speechRunId += 1;
+        stopStopWatcher();
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            updateVoiceTranscript("Speech stopped.");
+        }
+    }
+
+    function startStopWatcher() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition || stopWatcher) return;
+
+        stopWatcher = new SpeechRecognition();
+        stopWatcher.lang = "en-IN";
+        stopWatcher.continuous = true;
+        stopWatcher.interimResults = true;
+        stopWatcher.onresult = function (event) {
+            for (let index = event.resultIndex; index < event.results.length; index += 1) {
+                const heard = event.results[index][0].transcript.trim().toLowerCase();
+                if (/^(stop|stop speaking|stop speech|be quiet|cancel)$/i.test(heard)) {
+                    stopAllVoice("Speech and listening stopped.");
+                    return;
+                }
+            }
+        };
+        stopWatcher.onerror = function () {
+            stopStopWatcher();
+        };
+        stopWatcher.onend = function () {
+            stopWatcher = null;
+            if ("speechSynthesis" in window && window.speechSynthesis.speaking) {
+                startStopWatcher();
+            }
+        };
+
+        try {
+            stopWatcher.start();
+        } catch (error) {
+            stopStopWatcher();
+        }
+    }
+
+    function stopStopWatcher() {
+        if (!stopWatcher) return;
+        stopWatcher.onend = null;
+        try {
+            stopWatcher.stop();
+        } catch (error) {
+            // The watcher may already have ended.
+        }
+        stopWatcher = null;
+    }
+
+    function stopAllVoice(message = "Speech and listening stopped.") {
+        stopSpeech();
+        if (recognition && isListening) {
+            recognition.onend = null;
+            recognition.stop();
+        }
+        isListening = false;
+        voiceConversationActive = false;
+        voiceConversationStep = "";
+        voiceResultText = "";
+        voicePracticeSession = false;
+        if (typeof stopRecognition === "function") stopRecognition();
+        updateVoiceTranscript(message);
+    }
+
+    function startVoiceConversation() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            updateVoiceTranscript("Voice recognition is not supported. Please use Chrome or Edge.");
+            return;
+        }
+
+        voiceConversationActive = true;
+        voiceConversationStep = "subject";
+        stopSpeech();
+        waitForVoiceOptions(subjectSelect, () => speakText("Welcome to Academic Bot. What subject do you wish to study?", {
+            onEnd: listenForConversationAnswer
+        }));
+    }
+
+    function listenForConversationAnswer() {
+        if (!voiceConversationActive) return;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-IN";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.maxAlternatives = 1;
+        isListening = true;
+
+        const btn = document.getElementById("startVoiceBtn");
+        if (btn) {
+            btn.textContent = "🔴 Listening...";
+            btn.classList.add("voice-button-listening");
+        }
+        updateVoiceTranscript(`Listening for ${voiceConversationStep}...`);
+
+        recognition.onresult = function (event) {
+            const answer = event.results[0][0].transcript.trim();
+            updateVoiceTranscript(`You said: "${answer}"`);
+            recognition.onend = null;
+            try {
+                recognition.stop();
+            } catch (error) {
+                // Recognition may already be ending after the result.
+            }
+            processVoiceConversationAnswer(answer);
+        };
+
+        recognition.onerror = function (event) {
+            isListening = false;
+            if (event.error === "not-allowed") {
+                endVoiceConversation("Microphone access is required for the voice assistant.");
+                return;
+            }
+            speakAndListen("I did not hear that clearly. Please say it again.");
+        };
+
+        recognition.onend = function () {
+            isListening = false;
+            if (btn) {
+                btn.textContent = "🎙️ Start Speaking";
+                btn.classList.remove("voice-button-listening");
+            }
+            if (voiceConversationActive) {
+                window.setTimeout(listenForConversationAnswer, 250);
+            }
+        };
+
+        try {
+            recognition.start();
+        } catch (error) {
+            endVoiceConversation("I could not start the microphone. Please try again.");
+        }
+    }
+
+    function speakAndListen(message) {
+        updateVoiceTranscript(message);
+        speakText(message, { onEnd: listenForConversationAnswer });
+    }
+
+    function findVoiceOption(select, spokenText, numberPrefix) {
+        const spoken = spokenText.toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+        const numberWords = {
+            zero: "0", one: "1", two: "2", three: "3", four: "4",
+            five: "5", six: "6", seven: "7", eight: "8", nine: "9", ten: "10"
+        };
+        const spokenNumber = numberWords[spoken.replace(/^(unit|topic)\s+/, "")];
+        const number = spoken.match(/(?:unit|topic)?\s*(\d+)/)?.[1] || spokenNumber;
+        const options = Array.from(select.options).filter(option => option.value);
+
+        if (number && numberPrefix) {
+            const numbered = options.find(option => option.value === number || option.textContent.toLowerCase().includes(`${numberPrefix} ${number}`));
+            if (numbered) return numbered;
+        }
+
+        return options.find(option => {
+            const label = option.textContent.toLowerCase();
+            return label === spoken || label.includes(spoken) || spoken.includes(label);
+        });
+    }
+
+    function selectVoiceOption(select, option) {
+        select.value = option.value;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    function waitForVoiceOptions(select, callback, attempts = 20) {
+        if (select.options.length > 1 && !select.disabled) {
+            callback();
+            return;
+        }
+        if (attempts <= 0) {
+            speakAndListen("The options are still loading. Please say your answer again.");
+            return;
+        }
+        window.setTimeout(() => waitForVoiceOptions(select, callback, attempts - 1), 250);
+    }
+
+    function processVoiceConversationAnswer(answer) {
+        if (!voiceConversationActive) return;
+
+        if (/^(stop|stop speaking|stop speech|be quiet|cancel)$/i.test(answer.trim())) {
+            stopAllVoice("Speech and listening stopped.");
+            return;
+        }
+
+        if (voiceConversationStep === "result_action") {
+            const spoken = answer.toLowerCase();
+            if (spoken.includes("braille") || spoken.includes("brail")) {
+                endVoiceConversation("Connecting the result to Braille.");
+                toggleBrailleView();
+                return;
+            }
+            if (spoken.includes("voice") || spoken.includes("explain") || spoken.includes("read")) {
+                endVoiceConversation("Explaining the result by voice.");
+                speakText(cleanSpeechText(voiceResultText));
+                voiceResultText = "";
+                return;
+            }
+            speakAndListen("Please say voice to hear the explanation, or Braille to connect the result to Braille.");
+            return;
+        }
+
+        if (voiceConversationStep === "subject") {
+            const option = findVoiceOption(subjectSelect, answer, "");
+            if (!option) {
+                speakAndListen("I could not find that subject. Please say the subject exactly as shown in the list.");
+                return;
+            }
+            selectVoiceOption(subjectSelect, option);
+            voiceConversationStep = "unit";
+            waitForVoiceOptions(unitSelect, () => speakAndListen(`You selected ${option.textContent}. Which unit would you like to study?`));
+            return;
+        }
+
+        if (voiceConversationStep === "unit") {
+            const option = findVoiceOption(unitSelect, answer, "unit");
+            if (!option) {
+                speakAndListen("I could not find that unit. Please say a unit number, such as unit one.");
+                return;
+            }
+            selectVoiceOption(unitSelect, option);
+            voiceConversationStep = "topic";
+            waitForVoiceOptions(topicSelect, () => speakAndListen("Which topic would you like to study?"));
+            return;
+        }
+
+        if (voiceConversationStep === "topic") {
+            const option = findVoiceOption(topicSelect, answer, "");
+            if (!option) {
+                speakAndListen("I could not find that topic. Please say the topic name or code.");
+                return;
+            }
+            selectVoiceOption(topicSelect, option);
+            voiceConversationStep = "mode";
+            speakAndListen("Would you like me to explain it, structure notes, or start practice?");
+            return;
+        }
+
+        if (voiceConversationStep === "mode") {
+            const spoken = answer.toLowerCase();
+            endVoiceConversation();
+            if (spoken.includes("note")) {
+                voiceReadResult = true;
+                openNotes();
+            } else if (spoken.includes("practice") || spoken.includes("question") || spoken.includes("viva")) {
+                openPractice(true);
+            } else if (spoken.includes("explain") || spoken.includes("learn") || spoken.includes("teach")) {
+                voiceReadResult = true;
+                openLearn();
+            } else {
+                voiceConversationActive = true;
+                voiceConversationStep = "mode";
+                speakAndListen("Please say explain, notes, or practice.");
+            }
+        }
+    }
+
+    function endVoiceConversation(message = "Voice study session started.") {
+        voiceConversationActive = false;
+        voiceConversationStep = "";
+        if (recognition && isListening) {
+            recognition.onend = null;
+            recognition.stop();
+        }
+        isListening = false;
+        if (message) updateVoiceTranscript(message);
+    }
+
+    function beginVoiceResultChoice(text) {
+        voiceResultText = String(text || "");
+        voiceConversationActive = true;
+        voiceConversationStep = "result_action";
+        speakAndListen("The result is ready. Would you like a voice explanation, or should I connect it to Braille? Say voice or Braille.");
+    }
+
+    function startVoiceAssistant() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            updateVoiceTranscript("Voice recognition is not supported in this browser. Please use Chrome or Edge and allow microphone access.");
+            return;
+        }
+
+        if (voiceConversationActive) {
+            endVoiceConversation("Voice study session stopped.");
+            stopSpeech();
+            return;
+        }
+
+        if (isListening) {
+            recognition?.stop();
+            isListening = false;
+            return;
+        }
+
+        startVoiceConversation();
+    }
+
+    function askAIFromVoice(promptText = null) {
+        const question = promptText || document.getElementById("voiceTranscript")?.textContent.replace(/^You said:\s*/i, "").replace(/"/g, "").trim() || "Explain this topic in simple words.";
+
+        showContent("🤖 Ask AI", getSelectedTopicName(), `
+            <div class="loading">
+                <div class="spinner"></div>
+                Getting a textbook-grounded answer...
+            </div>
+        `);
+
+        fetch("/api/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                subject: subjectSelect.value,
+                unit: unitSelect.value,
+                topic_code: topicSelect.value,
+                question: question
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) throw new Error(data.error || "Unable to get AI answer.");
+            renderAnswer(data.answer, data.sources, true);
+            speakText(cleanSpeechText(data.answer));
+            updateVoiceTranscript(`AI answer received for: "${question}"`);
+        })
+        .catch(error => {
+            showError(error.message || "Unable to get answer.");
+        });
+    }
+
+    function readCurrentAnswer() {
+        const answerElement = document.querySelector(".answer");
+        if (!answerElement) {
+            updateVoiceTranscript("There is no answer to read yet.");
+            return;
+        }
+        const text = answerElement.innerText || answerElement.textContent || "";
+        if (!text.trim()) {
+            updateVoiceTranscript("The answer is empty.");
+            return;
+        }
+        speakText(cleanSpeechText(text));
+    }
+
+    function toggleBrailleView() {
+        const answerElement = document.getElementById("answerSource");
+        if (!answerElement) {
+            updateVoiceTranscript("There is no answer to convert to Braille.");
+            return;
+        }
+
+        const answerText = answerElement.innerText || answerElement.textContent || "";
+        let brailleBox = document.getElementById("brailleViewBox");
+        if (!brailleBox) {
+            brailleBox = document.createElement("div");
+            brailleBox.id = "brailleViewBox";
+            brailleBox.className = "answer";
+            brailleBox.style.marginTop = "18px";
+            brailleBox.style.padding = "16px";
+            brailleBox.style.border = "1px solid #e5e7eb";
+            brailleBox.style.borderRadius = "12px";
+            brailleBox.style.background = "#f9fafb";
+            brailleBox.style.fontSize = "18px";
+            brailleBox.style.lineHeight = "1.8";
+            brailleBox.setAttribute("aria-live", "polite");
+            document.getElementById("contentBody")?.appendChild(brailleBox);
+        }
+
+        fetch("/api/braille", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: answerText })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) throw new Error(data.error || "Braille conversion failed.");
+            brailleBox.textContent = data.braille || "No output available.";
+            brailleBox.style.display = "block";
+            brailleBox.setAttribute("aria-live", "polite");
+            updateVoiceTranscript("Braille view generated.");
+        })
+        .catch(err => updateVoiceTranscript(err.message || "Braille generation failed."));
+    }
+
+    function copyCurrentText() {
+        const answerElement = document.getElementById("answerSource");
+        const text = answerElement ? (answerElement.innerText || answerElement.textContent || "") : "";
+        if (!text.trim()) return;
+
+        navigator.clipboard.writeText(text)
+            .then(() => updateVoiceTranscript("Answer copied to clipboard."))
+            .catch(() => updateVoiceTranscript("Clipboard access failed. You can still select the text manually."));
+    }
+
+    function copyBrailleText() {
+        const brailleBox = document.getElementById("brailleViewBox");
+        const text = brailleBox ? brailleBox.textContent.trim() : "";
+        if (!text) {
+            updateVoiceTranscript("Generate braille output first.");
+            return;
+        }
+
+        navigator.clipboard.writeText(text)
+            .then(() => updateVoiceTranscript("Braille output copied to clipboard."))
+            .catch(() => updateVoiceTranscript("Clipboard access failed for Braille output."));
+    }
+
+    function downloadBraille() {
+        const brailleBox = document.getElementById("brailleViewBox");
+        const text = brailleBox ? brailleBox.textContent.trim() : "";
+        if (!text) {
+            updateVoiceTranscript("Generate braille output first.");
+            return;
+        }
+
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "braille-output.txt";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        updateVoiceTranscript("Braille output downloaded.");
+    }
+
+    function addAnswerControls() {
+        const actions = document.querySelector(".actions");
+        if (!actions) return;
+
+        const buttons = actions.querySelectorAll("button");
+        const hasListen = Array.from(buttons).some(btn => btn.textContent.includes("Listen"));
+        if (hasListen) return;
+
+        const listenBtn = document.createElement("button");
+        listenBtn.className = "btn btn-primary";
+        listenBtn.type = "button";
+        listenBtn.textContent = "🔊 Listen";
+        listenBtn.onclick = readCurrentAnswer;
+
+        const brailleBtn = document.createElement("button");
+        brailleBtn.className = "btn btn-secondary";
+        brailleBtn.type = "button";
+        brailleBtn.textContent = "🅱 Braille";
+        brailleBtn.onclick = toggleBrailleView;
+
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "btn btn-secondary";
+        copyBtn.type = "button";
+        copyBtn.textContent = "📋 Copy";
+        copyBtn.onclick = copyCurrentText;
+
+        const brailleCopyBtn = document.createElement("button");
+        brailleCopyBtn.className = "btn btn-secondary";
+        brailleCopyBtn.type = "button";
+        brailleCopyBtn.textContent = "🅱 Copy Braille";
+        brailleCopyBtn.onclick = copyBrailleText;
+
+        const brailleDownloadBtn = document.createElement("button");
+        brailleDownloadBtn.className = "btn btn-secondary";
+        brailleDownloadBtn.type = "button";
+        brailleDownloadBtn.textContent = "💾 Download Braille";
+        brailleDownloadBtn.onclick = downloadBraille;
+
+        actions.insertBefore(listenBtn, actions.firstChild);
+        actions.insertBefore(brailleBtn, actions.firstChild);
+        actions.appendChild(copyBtn);
+        actions.appendChild(brailleCopyBtn);
+        actions.appendChild(brailleDownloadBtn);
+
+        const brailleBox = document.createElement("div");
+        brailleBox.id = "brailleViewBox";
+        brailleBox.className = "answer";
+        brailleBox.style.display = "none";
+        brailleBox.style.marginTop = "18px";
+        brailleBox.style.padding = "16px";
+        brailleBox.style.border = "1px solid #e5e7eb";
+        brailleBox.style.borderRadius = "12px";
+        brailleBox.style.background = "#f9fafb";
+        brailleBox.style.fontSize = "18px";
+        brailleBox.style.lineHeight = "1.8";
+        brailleBox.setAttribute("aria-live", "polite");
+        actions.parentNode.appendChild(brailleBox);
+    }
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        await loadSubjects();
+        window.setTimeout(function () {
+            startVoiceConversation();
+        }, 350);
+        document.getElementById("startVoiceBtn")?.addEventListener("click", startVoiceAssistant);
+        document.getElementById("stopVoiceBtn")?.addEventListener("click", stopSpeech);
+
+        document.addEventListener("keydown", function (event) {
+            const altKey = event.altKey;
+            if (!altKey) return;
+            const key = event.key.toLowerCase();
+            if (key === "h") { window.scrollTo({ top: 0, behavior: "smooth" }); }
+            if (key === "l") { openLearn(); }
+            if (key === "n") { openNotes(); }
+            if (key === "p") { openPractice(); }
+            if (key === "a") { askAIFromVoice("Explain this topic in simple words."); }
+            if (key === "m") { startVoiceAssistant(); }
+            if (key === "s") { stopSpeech(); }
+            if (key === "b") { toggleBrailleView(); }
+        });
+    });
+
+
+    // ==========================================
+    // INITIALIZE
+    // ==========================================
+
+
+    // ==========================================
+    // SUBJECTS
+    // ==========================================
+
+    async function loadSubjects() {
+
+        try {
+
+            const response =
+                await fetch("/api/subjects");
+
+            const data =
+                await response.json();
+
+            subjectSelect.innerHTML =
+                `<option value="">
+                    Select Subject
+                </option>`;
+
+            if (data.success) {
+
+                data.subjects.forEach(
+                    subject => {
+
+                        const option =
+                            document.createElement("option");
+
+                        option.value =
+                            subject.name;
+
+                        option.textContent =
+                            subject.name;
+
+                        subjectSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+            }
+
+        } catch (error) {
+
+            showError(
+                "Unable to load subjects."
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // SUBJECT CHANGE
+    // ==========================================
+
+    subjectSelect.addEventListener(
+        "change",
+        async function () {
+
+            const subject =
+                this.value;
+
+            resetSelect(
+                unitSelect,
+                "Select Unit"
+            );
+
+            resetSelect(
+                topicSelect,
+                "Select Topic"
+            );
+
+            unitSelect.disabled = true;
+            topicSelect.disabled = true;
+
+            if (!subject) {
+                return;
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/units?subject=${encodeURIComponent(subject)}`
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!data.success) {
+                    throw new Error(
+                        data.error
+                    );
+                }
+
+                data.units.forEach(unit => {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        unit.unit_number;
+
+                    option.textContent =
+                        `Unit ${unit.unit_number}`;
+
+                    unitSelect.appendChild(
+                        option
+                    );
+
+                });
+
+                unitSelect.disabled = false;
+
+            } catch (error) {
+
+                showError(
+                    "Unable to load units."
+                );
+
+            }
+
+        }
+    );
+
+
+    // ==========================================
+    // UNIT CHANGE
+    // ==========================================
+
+    unitSelect.addEventListener(
+        "change",
+        async function () {
+
+            const subject =
+                subjectSelect.value;
+
+            const unit =
+                this.value;
+
+            resetSelect(
+                topicSelect,
+                "Select Topic"
+            );
+
+            topicSelect.disabled = true;
+
+            if (!subject || !unit) {
+                return;
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/topics?subject=${encodeURIComponent(subject)}&unit=${encodeURIComponent(unit)}`
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!data.success) {
+                    throw new Error(
+                        data.error
+                    );
+                }
+
+                if (!data.topics.length) {
+
+                    topicSelect.innerHTML =
+                        `<option value="">
+                            No topics indexed for this unit
+                        </option>`;
+
+                    return;
+                }
+
+                data.topics.forEach(topic => {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        topic.topic_code;
+
+                    option.textContent =
+                        `${topic.topic_code} ${topic.topic_name}`;
+
+                    topicSelect.appendChild(
+                        option
+                    );
+
+                });
+
+                topicSelect.disabled = false;
+
+            } catch (error) {
+
+                showError(
+                    "Unable to load topics."
+                );
+
+            }
+
+        }
+    );
+
+
+    // ==========================================
+    // LEARN
+    // ==========================================
+
+    async function openLearn() {
+
+        if (!validateSelection()) {
+            return;
+        }
+
+        currentMode = "learn";
+
+        const topicName =
+            getSelectedTopicName();
+
+        showContent(
+            "📖 Learn",
+            topicName,
+            `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Preparing your lesson...
+                </div>
+            `
+        );
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/learn",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            subject:
+                                subjectSelect.value,
+
+                            unit:
+                                unitSelect.value,
+
+                            topic_code:
+                                topicSelect.value
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+                throw new Error(
+                    data.error
+                );
+            }
+
+            renderAnswer(
+                data.answer,
+                data.sources,
+                true
+            );
+
+        } catch (error) {
+
+            showError(
+                error.message ||
+                "Unable to generate lesson."
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // NOTES
+    // ==========================================
+
+    async function openNotes() {
+
+        if (!validateSelection()) {
+            return;
+        }
+
+        currentMode = "notes";
+
+        const topicName =
+            getSelectedTopicName();
+
+        showContent(
+            "📝 Notes",
+            topicName,
+            `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Generating your 14-mark answer...
+                </div>
+            `
+        );
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/notes",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            subject:
+                                subjectSelect.value,
+
+                            unit:
+                                unitSelect.value,
+
+                            topic_code:
+                                topicSelect.value
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+                throw new Error(
+                    data.error
+                );
+            }
+
+            renderAnswer(
+                data.answer,
+                data.sources,
+                true
+            );
+
+        } catch (error) {
+
+            showError(
+                error.message ||
+                "Unable to generate notes."
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // IMPROVED VOICE PRACTICE
+    // ==========================================
+
+    let practiceAttempt = 1;
+    let practiceSubmitting = false;
+    let finalTranscript = "";
+    let interimTranscript = "";
+    let silenceTimer = null;
+    let recognitionRestartCount = 0;
+
+    const SILENCE_TO_SUBMIT_MS = 4000;
+
+    async function openPractice(autoVoice = false) {
+
+        if (!validateSelection()) return;
+
+        voicePracticeSession = Boolean(autoVoice);
+
+        currentMode = "practice";
+
+        practiceQuestion = "";
+        practiceQuestionNumber = 0;
+        practiceScore = 0;
+        practiceTotal = 0;
+        practiceAttempt = 1;
+        practiceSubmitting = false;
+        finalTranscript = "";
+        interimTranscript = "";
+
+        stopRecognition();
+
+        const topicName = getSelectedTopicName();
+
+        showContent(
+            "🎙️ Voice Practice",
+            topicName,
+            `
+            <div class="practice-screen">
+
+                <div class="practice-progress">
+                    Preparing practice session...
+                </div>
+
+                <div class="mic-circle" id="micCircle">🎙️</div>
+
+                <div class="practice-status" id="practiceStatus">
+                    Your AI examiner is preparing the first question...
+                </div>
+
+            </div>
+            `
+        );
+
+        try {
+
+            const response = await fetch(
+                "/api/practice/start",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        subject: subjectSelect.value,
+                        unit: unitSelect.value,
+                        topic_code: topicSelect.value
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.error || "Unable to start practice."
+                );
+            }
+
+            practiceQuestion = data.question;
+            practiceQuestionNumber = data.question_number;
+            practiceAttempt = data.attempt || 1;
+
+            renderPracticeScreen(
+                autoVoice
+                    ? "Listen to the question. The microphone will start automatically when the question ends."
+                    : "Listen to the question. Then tap the microphone and answer."
+            );
+
+            speak(practiceQuestion);
+
+        } catch (error) {
+
+            showError(
+                error.message || "Unable to start practice."
+            );
+
+        }
+    }
+
+
+    function renderPracticeScreen(status) {
+
+        contentBody.innerHTML = `
+            <div class="practice-screen">
+
+                <div class="practice-progress">
+                    Question ${practiceQuestionNumber} of 5
+                    ${practiceAttempt > 1
+                        ? ` • Attempt ${practiceAttempt}`
+                        : ""}
+                </div>
+
+                <div class="practice-question-card">
+                    <div class="practice-label">
+                        AI Examiner — Question
+                    </div>
+                    <div
+                        id="practiceQuestionCaption"
+                        class="practice-question"
+                    >
+                        ${escapeHTML(practiceQuestion)}
+                    </div>
+                </div>
+
+                <div class="voice-caption-box">
+                    <div class="practice-label">
+                        Your Answer — Live Caption
+                    </div>
+                    <div
+                        id="studentCaption"
+                        class="voice-caption"
+                    >
+                        Your spoken answer will appear here...
+                    </div>
+                </div>
+
+                <div
+                    id="micCircle"
+                    class="mic-circle"
+                >
+                    🎙️
+                </div>
+
+                <div
+                    id="practiceStatus"
+                    class="practice-status"
+                >
+                    ${escapeHTML(status)}
+                </div>
+
+                <div class="practice-actions">
+                    <button
+                        id="voiceStartButton"
+                        class="btn btn-primary voice-button"
+                        onclick="startVoiceAnswer()"
+                    >
+                        🎤 Start Answer
+                    </button>
+
+                    <button
+                        id="voiceFinishButton"
+                        class="btn btn-secondary voice-button"
+                        onclick="finishVoiceAnswer()"
+                        disabled
+                    >
+                        ✓ I'm Done
+                    </button>
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    function updatePracticeStatus(text) {
+
+        const element =
+            document.getElementById("practiceStatus");
+
+        if (element) {
+            element.textContent = text;
+        }
+    }
+
+
+    function updateStudentCaption(text, interim = false) {
+
+        const element =
+            document.getElementById("studentCaption");
+
+        if (!element) return;
+
+        element.textContent =
+            text || "Your spoken answer will appear here...";
+
+        element.classList.toggle(
+            "interim",
+            interim
+        );
+    }
+
+
+    function setVoiceButtons(listening) {
+
+        const startButton =
+            document.getElementById("voiceStartButton");
+
+        const finishButton =
+            document.getElementById("voiceFinishButton");
+
+        if (startButton) {
+            startButton.disabled =
+                listening || practiceSubmitting;
+        }
+
+        if (finishButton) {
+            finishButton.disabled =
+                !listening || practiceSubmitting;
+        }
+    }
+
+
+    // ==========================================
+    // SPEECH SYNTHESIS
+    // ==========================================
+
+    function speak(text) {
+
+        if (!("speechSynthesis" in window)) {
+            updatePracticeStatus(
+                "Speech output is not supported in this browser."
+            );
+            return;
+        }
+
+        const runId = ++speechRunId;
+        window.speechSynthesis.cancel();
+
+        const utterance =
+            new SpeechSynthesisUtterance(
+                cleanSpeechText(text)
+            );
+
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        utterance.onstart = function () {
+            updatePracticeStatus(
+                "AI examiner is speaking..."
+            );
+        };
+
+        utterance.onend = function () {
+            stopStopWatcher();
+            if (runId !== speechRunId) return;
+            if (voicePracticeSession) {
+                updatePracticeStatus(
+                    "Listening... speak your complete answer."
+                );
+                startVoiceAnswer();
+                return;
+            }
+            updatePracticeStatus(
+                "Your turn. Speak naturally."
+            );
+        };
+
+        startStopWatcher();
+        window.speechSynthesis.speak(utterance);
+    }
+
+
+    // ==========================================
+    // VOICE RECOGNITION
+    // ==========================================
+
+    function startVoiceAnswer() {
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+
+            updatePracticeStatus(
+                "Voice recognition is not supported. Use Google Chrome or Microsoft Edge."
+            );
+
+            return;
+        }
+
+        if (isListening || practiceSubmitting) {
+            return;
+        }
+
+        clearTimeout(silenceTimer);
+
+        finalTranscript = "";
+        interimTranscript = "";
+        recognitionRestartCount = 0;
+
+        updateStudentCaption("");
+
+        recognition =
+            new SpeechRecognition();
+
+        recognition.lang = "en-IN";
+
+        // Keep recognition alive while the student speaks.
+        recognition.continuous = true;
+
+        // Show live captions.
+        recognition.interimResults = true;
+
+        recognition.maxAlternatives = 1;
+
+        isListening = true;
+        practiceSubmitting = false;
+
+        const mic =
+            document.getElementById("micCircle");
+
+        if (mic) {
+            mic.classList.add("listening");
+        }
+
+        setVoiceButtons(true);
+
+        updatePracticeStatus(
+            "Listening... speak your complete answer. I will wait for you to finish."
+        );
+
+        recognition.onresult = function(event) {
+
+            let newFinal = "";
+            let newInterim = "";
+
+            for (
+                let i = event.resultIndex;
+                i < event.results.length;
+                i++
+            ) {
+
+                const text =
+                    event.results[i][0].transcript.trim();
+
+                if (!text) continue;
+
+                if (event.results[i].isFinal) {
+                    newFinal += text + " ";
+                } else {
+                    newInterim += text + " ";
+                }
+            }
+
+            if (newFinal) {
+                finalTranscript =
+                    (
+                        finalTranscript +
+                        " " +
+                        newFinal
+                    ).replace(/\s+/g, " ").trim();
+
+                if (/^(stop|stop speaking|stop speech|be quiet|cancel)$/i.test(finalTranscript)) {
+                    stopAllVoice("Speech and listening stopped.");
+                    return;
+                }
+            }
+
+            interimTranscript =
+                newInterim.trim();
+
+            const displayText =
+                (
+                    finalTranscript +
+                    (interimTranscript
+                        ? " " + interimTranscript
+                        : "")
+                ).trim();
+
+            updateStudentCaption(
+                displayText,
+                Boolean(interimTranscript)
+            );
+
+            if (finalTranscript) {
+
+                // IMPORTANT:
+                // Never submit immediately after the first
+                // recognition result. Wait for real silence.
+                clearTimeout(silenceTimer);
+
+                silenceTimer = setTimeout(
+                    function() {
+                        finishVoiceAnswer();
+                    },
+                    SILENCE_TO_SUBMIT_MS
+                );
+            }
+        };
+
+
+        recognition.onerror = function(event) {
+
+            console.log(
+                "Speech recognition error:",
+                event.error
+            );
+
+            // "no-speech" and "audio-capture" can happen
+            // without meaning the answer is finished.
+            if (
+                event.error === "no-speech" ||
+                event.error === "aborted"
+            ) {
+                return;
+            }
+
+            if (event.error === "not-allowed") {
+
+                isListening = false;
+
+                setVoiceButtons(false);
+
+                updatePracticeStatus(
+                    "Microphone permission was blocked. Allow microphone access for this site and try again."
+                );
+
+                return;
+            }
+
+            updatePracticeStatus(
+                "Voice recognition had a problem. You can continue speaking or try again."
+            );
+        };
+
+
+        recognition.onend = function() {
+
+            // Chrome may stop its recognition service even while
+            // the student is still answering. Do NOT submit here.
+            if (
+                isListening &&
+                !practiceSubmitting
+            ) {
+
+                if (finalTranscript) {
+                    updatePracticeStatus(
+                        "Listening is reconnecting... continue your answer."
+                    );
+                }
+
+                setTimeout(
+                    function() {
+
+                        if (
+                            isListening &&
+                            !practiceSubmitting
+                        ) {
+
+                            try {
+                                recognition.start();
+                            } catch (error) {
+                                console.log(
+                                    "Recognition restart:",
+                                    error
+                                );
+                            }
+
+                        }
+
+                    },
+                    250
+                );
+
+                return;
+            }
+
+            isListening = false;
+
+            const mic =
+                document.getElementById("micCircle");
+
+            if (mic) {
+                mic.classList.remove("listening");
+            }
+
+            setVoiceButtons(false);
+        };
+
+        try {
+            recognition.start();
+        } catch (error) {
+            isListening = false;
+            setVoiceButtons(false);
+            updatePracticeStatus(
+                "Microphone could not start. Please allow microphone access and say your answer again."
+            );
+        }
+    }
+
+
+    function stopRecognition() {
+
+        clearTimeout(silenceTimer);
+
+        isListening = false;
+
+        if (recognition) {
+
+            try {
+                recognition.onend = null;
+                recognition.stop();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        recognition = null;
+
+        const mic =
+            document.getElementById("micCircle");
+
+        if (mic) {
+            mic.classList.remove("listening");
+        }
+
+        setVoiceButtons(false);
+    }
+
+
+    function finishVoiceAnswer() {
+
+        if (practiceSubmitting) return;
+
+        clearTimeout(silenceTimer);
+
+        const answer =
+            (
+                finalTranscript +
+                " " +
+                interimTranscript
+            ).replace(/\s+/g, " ").trim();
+
+        if (!answer) {
+
+            updatePracticeStatus(
+                "I did not hear an answer. Please tap Start Answer and speak."
+            );
+
+            return;
+        }
+
+        practiceSubmitting = true;
+
+        stopRecognition();
+
+        updateStudentCaption(answer, false);
+
+        updatePracticeStatus(
+            "Answer captured. AI examiner is evaluating it..."
+        );
+
+        setVoiceButtons(false);
+
+        submitVoiceAnswer(answer);
+    }
+
+
+    // ==========================================
+    // SEND ANSWER + HANDLE RETRY
+    // ==========================================
+
+    async function submitVoiceAnswer(transcript) {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/practice/answer",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            answer: transcript
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.error ||
+                    "Unable to evaluate the answer."
+                );
+            }
+
+            renderEvaluation(data);
+
+            const spokenFeedback =
+                buildSpokenEvaluation(data);
+
+            speak(spokenFeedback);
+
+            // ==========================================
+            // WEAK / PARTIAL ANSWER:
+            // SAME QUESTION ONLY
+            // ==========================================
+
+            if (data.retry_required) {
+
+                practiceAttempt =
+                    data.attempt || practiceAttempt + 1;
+
+                updatePracticeStatus(
+                    "Revise your answer. The same question will be asked again."
+                );
+
+                // Do NOT change practiceQuestion.
+                // Do NOT increment question number.
+                // Do NOT call the next-question API.
+
+                practiceSubmitting = false;
+
+                return;
+            }
+
+            // ==========================================
+            // ACCEPTED ANSWER
+            // ==========================================
+
+            if (data.finished) {
+
+                practiceScore =
+                    data.final_score || 0;
+
+                practiceTotal =
+                    data.final_total || 0;
+
+                setTimeout(
+                    showPracticeFinal,
+                    2200
+                );
+
+                return;
+            }
+
+            // Backend sends the next question only after
+            // the current question is accepted.
+            practiceQuestion =
+                data.next_question;
+
+            practiceQuestionNumber =
+                data.question_number;
+
+            practiceAttempt = 1;
+
+            practiceSubmitting = false;
+
+            setTimeout(
+                function() {
+
+                    renderPracticeScreen(
+                        "Next question. Listen carefully."
+                    );
+
+                    speak(practiceQuestion);
+
+                },
+                2200
+            );
+
+        } catch (error) {
+
+            practiceSubmitting = false;
+
+            updatePracticeStatus(
+                error.message ||
+                "Unable to evaluate your answer."
+            );
+
+            setVoiceButtons(false);
+        }
+    }
+
+
+    function renderEvaluation(data) {
+
+        const score =
+            Number(data.score || 0);
+
+        const result =
+            data.result ||
+            "Evaluated";
+
+        const feedback =
+            data.feedback ||
+            "Your answer has been evaluated.";
+
+        const good =
+            data.what_was_good ||
+            "None.";
+
+        const missing =
+            data.missing_points ||
+            "None.";
+
+        const wrong =
+            data.wrong_points ||
+            "None.";
+
+        const correct =
+            data.correct_answer &&
+            data.correct_answer.toLowerCase() !== "not required."
+                ? data.correct_answer
+                : "";
+
+        const retryText =
+            data.retry_required
+                ? "Please revise and try the SAME question again."
+                : "Answer accepted. The next question will appear shortly.";
+
+        contentBody.innerHTML = `
+            <div class="practice-screen">
+
+                <div class="practice-progress">
+                    Question ${practiceQuestionNumber} of 5
+                    ${data.retry_required
+                        ? ` • Attempt ${data.attempt || practiceAttempt}`
+                        : ""}
+                </div>
+
+                <div class="practice-question-card">
+                    <div class="practice-label">
+                        AI Examiner — Question
+                    </div>
+                    <div class="practice-question">
+                        ${escapeHTML(practiceQuestion)}
+                    </div>
+                </div>
+
+                <div class="voice-caption-box">
+                    <div class="practice-label">
+                        Your Answer — Caption
+                    </div>
+                    <div class="voice-caption">
+                        ${escapeHTML(finalTranscript || "Answer captured.")}
+                    </div>
+                </div>
+
+                <div class="evaluation-card">
+
+                    <div class="practice-label">
+                        AI Evaluation
+                    </div>
+
+                    <div class="evaluation-score">
+                        ${score}/10
+                    </div>
+
+                    <div class="evaluation-row">
+                        <strong>Result</strong>
+                        <p>${escapeHTML(result)}</p>
+                    </div>
+
+                    <div class="evaluation-row">
+                        <strong>Feedback</strong>
+                        <p>${escapeHTML(feedback)}</p>
+                    </div>
+
+                    <div class="evaluation-row">
+                        <strong>What you did well</strong>
+                        <p>${escapeHTML(good)}</p>
+                    </div>
+
+                    <div class="evaluation-row">
+                        <strong>Missing points</strong>
+                        <p>${escapeHTML(missing)}</p>
+                    </div>
+
+                    <div class="evaluation-row">
+                        <strong>Wrong points</strong>
+                        <p>${escapeHTML(wrong)}</p>
+                    </div>
+
+                    ${correct ? `
+                    <div class="evaluation-row">
+                        <strong>Correct answer</strong>
+                        <p>${escapeHTML(correct)}</p>
+                    </div>
+                    ` : ""}
+
+                    <div class="evaluation-row">
+                        <strong>Next step</strong>
+                        <p>${escapeHTML(retryText)}</p>
+                    </div>
+
+                </div>
+
+                ${
+                    data.retry_required
+                    ? `
+                    <div class="practice-actions">
+                        <button
+                            class="btn btn-primary voice-button"
+                            onclick="retrySameQuestion()"
+                        >
+                            🎤 Retry Same Question
+                        </button>
+                    </div>
+                    `
+                    : `
+                    <div
+                        class="practice-status"
+                    >
+                        ${escapeHTML(retryText)}
+                    </div>
+                    `
+                }
+
+            </div>
+        `;
+    }
+
+
+    function retrySameQuestion() {
+
+        finalTranscript = "";
+        interimTranscript = "";
+        practiceSubmitting = false;
+
+        renderPracticeScreen(
+            "Retry this SAME question after revising the feedback."
+        );
+
+        updateStudentCaption("");
+
+        setTimeout(
+            function() {
+                speak(practiceQuestion);
+            },
+            300
+        );
+    }
+
+
+    function buildSpokenEvaluation(data) {
+
+        let text = "";
+
+        if (data.result) {
+            text += data.result + ". ";
+        }
+
+        if (data.score !== undefined) {
+            text += "You scored " +
+                data.score +
+                " out of 10. ";
+        }
+
+        if (data.feedback) {
+            text += data.feedback + " ";
+        }
+
+        if (data.missing_points &&
+            data.missing_points !== "None.") {
+            text +=
+                "Missing points: " +
+                data.missing_points +
+                ". ";
+        }
+
+        if (data.wrong_points &&
+            data.wrong_points !== "None.") {
+            text +=
+                "Correction: " +
+                data.wrong_points +
+                ". ";
+        }
+
+        if (data.retry_required) {
+
+            if (
+                data.correct_answer &&
+                data.correct_answer.toLowerCase() !==
+                    "not required."
+            ) {
+
+                text +=
+                    "Revise this correct answer: " +
+                    data.correct_answer +
+                    ". ";
+            }
+
+            text +=
+                "Please revise and answer the same question again.";
+
+        } else {
+
+            text +=
+                "Your answer is accepted. Let's continue to the next question.";
+
+        }
+
+        return text;
+    }
+
+
+    function showPracticeFinal() {
+
+        const percentage =
+            practiceTotal > 0
+                ? Math.round(
+                    (
+                        practiceScore /
+                        practiceTotal
+                    ) * 100
+                )
+                : 0;
+
+        contentBody.innerHTML = `
+            <div class="practice-screen">
+
+                <div class="mic-circle">
+                    🏆
+                </div>
+
+                <h2>
+                    Practice Completed
+                </h2>
+
+                <div class="evaluation-card">
+
+                    <div class="evaluation-score">
+                        ${practiceScore}/${practiceTotal}
+                    </div>
+
+                    <div class="practice-status">
+                        Overall performance: ${percentage}%
+                    </div>
+
+                    <p>
+                        You completed 5 accepted questions.
+                        Retries were used for revision and did
+                        not create extra questions.
+                    </p>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="openPractice()"
+                >
+                    Practice Again
+                </button>
+
+            </div>
+        `;
+
+        if (voicePracticeSession) {
+            voicePracticeSession = false;
+            beginVoiceResultChoice(contentBody.innerText || "Practice completed.");
+        }
+    }
+
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function cleanSpeechText(text) {
+
+        return String(text || "")
+            .replace(/RESULT:.*$/gim, "")
+            .replace(/SCORE:.*$/gim, "")
+            .replace(/WHAT_WAS_GOOD:.*$/gim, "")
+            .replace(/MISSING_POINTS:.*$/gim, "")
+            .replace(/WRONG_POINTS:.*$/gim, "")
+            .replace(/CORRECT_ANSWER:.*$/gim, "")
+            .replace(/RETRY:.*$/gim, "")
+            .replace(/NEXT_FOCUS:.*$/gim, "")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+
+    // ==========================================
+    // NOTES SHARE
+    // ==========================================
+
+    function shareNotes() {
+
+        const answerElement =
+            document.querySelector(
+                ".answer"
+            );
+
+        if (!answerElement) {
+            return;
+        }
+
+        const text =
+            answerElement.innerText;
+
+        const shareData = {
+
+            title:
+                getSelectedTopicName() +
+                " - Academic Notes",
+
+            text: text
+
+        };
+
+
+        if (
+            navigator.share
+        ) {
+
+            navigator.share(
+                shareData
+            ).catch(
+                () => {}
+            );
+
+        } else {
+
+            navigator.clipboard
+                .writeText(text)
+                .then(
+                    () => {
+
+                        alert(
+                            "Notes copied to clipboard."
+                        );
+
+                    }
+                );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // PDF
+    // ==========================================
+
+    function downloadNotesPDF() {
+
+        const answerElement =
+            document.querySelector(
+                ".answer"
+            );
+
+        if (!answerElement) {
+            return;
+        }
+
+        const originalTitle =
+            document.title;
+
+        document.title =
+            `${getSelectedTopicName()} - 14 Mark Notes`;
+
+        window.print();
+
+        document.title =
+            originalTitle;
+
+    }
+
+
+    // ==========================================
+    // RENDER ANSWER
+    // ==========================================
+
+    function renderAnswer(
+        markdown,
+        sources,
+        showActions
+    ) {
+
+        const html =
+            markdownToHTML(
+                markdown
+            );
+
+        let sourceHTML = "";
+
+        if (
+            sources &&
+            sources.length
+        ) {
+
+            sourceHTML = `
+                <div class="sources">
+                    📚 Source pages:
+                    ${sources.join(", ")}
+                </div>
+            `;
+
+        }
+
+
+        let actionHTML = "";
+
+        if (showActions) {
+
+            actionHTML = `
+
+                <div class="actions" aria-label="Notes actions">
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="shareNotes()"
+                    >
+                        📤 Share
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="downloadNotesPDF()"
+                    >
+                        📄 Download / Save as PDF
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="toggleBrailleView()"
+                    >
+                        🅱 Braille
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="copyBrailleText()"
+                    >
+                        📋 Copy Braille
+                    </button>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="downloadBraille()"
+                    >
+                        💾 Download Braille
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+
+
+        contentBody.innerHTML = `
+
+            <div id="answerSource" class="answer" aria-live="polite">
+                ${html}
+            </div>
+
+            ${sourceHTML}
+
+            ${actionHTML}
+
+        `;
+
+        if (voiceReadResult) {
+            voiceReadResult = false;
+            beginVoiceResultChoice(markdown);
+        }
+
+    }
+
+
+    // ==========================================
+    // SIMPLE MARKDOWN RENDERER
+    // ==========================================
+
+    function markdownToHTML(
+        text
+    ) {
+
+        if (!text) {
+            return "";
+        }
+
+        let safe =
+            escapeHTML(text);
+
+        // Code blocks
+        safe =
+            safe.replace(
+                /```([\s\S]*?)```/g,
+                "<pre>$1</pre>"
+            );
+
+        // Headings
+        safe =
+            safe.replace(
+                /^### (.*)$/gm,
+                "<h3>$1</h3>"
+            );
+
+        safe =
+            safe.replace(
+                /^## (.*)$/gm,
+                "<h2>$1</h2>"
+            );
+
+        safe =
+            safe.replace(
+                /^# (.*)$/gm,
+                "<h1>$1</h1>"
+            );
+
+        // Bold
+        safe =
+            safe.replace(
+                /\*\*(.*?)\*\*/g,
+                "<strong>$1</strong>"
+            );
+
+        // Unordered list
+        safe =
+            safe.replace(
+                /^\s*[-*] (.*)$/gm,
+                "<li>$1</li>"
+            );
+
+        safe =
+            safe.replace(
+                /(<li>.*<\/li>)/gs,
+                "<ul>$1</ul>"
+            );
+
+        // Numbered list
+        safe =
+            safe.replace(
+                /^\s*\d+\.\s+(.*)$/gm,
+                "<li>$1</li>"
+            );
+
+        // Paragraphs
+        const blocks =
+            safe.split(/\n{2,}/);
+
+        safe =
+            blocks.map(
+                block => {
+
+                    const trimmed =
+                        block.trim();
+
+                    if (!trimmed) {
+                        return "";
+                    }
+
+                    if (
+                        trimmed.startsWith("<h") ||
+                        trimmed.startsWith("<ul") ||
+                        trimmed.startsWith("<pre")
+                    ) {
+                        return trimmed;
+                    }
+
+                    return `<p>${trimmed.replace(
+                        /\n/g,
+                        "<br>"
+                    )}</p>`;
+
+                }
+            ).join("");
+
+        return safe;
+
+    }
+
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+
+    function validateSelection() {
+
+        if (!subjectSelect.value) {
+
+            alert(
+                "Please select a subject."
+            );
+
+            return false;
+        }
+
+        if (!unitSelect.value) {
+
+            alert(
+                "Please select a unit."
+            );
+
+            return false;
+        }
+
+        if (!topicSelect.value) {
+
+            alert(
+                "Please select a topic."
+            );
+
+            return false;
+        }
+
+        return true;
+
+    }
+
+
+    function getSelectedTopicName() {
+
+        const option =
+            topicSelect.options[
+                topicSelect.selectedIndex
+            ];
+
+        return option
+            ? option.textContent
+            : "";
+
+    }
+
+
+    function showContent(
+        title,
+        topic,
+        body
+    ) {
+
+        contentCard.classList.add(
+            "active"
+        );
+
+        contentTitle.textContent =
+            title;
+
+        contentTopic.textContent =
+            topic;
+
+        contentBody.innerHTML =
+            body;
+
+        contentCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    function showError(
+        message
+    ) {
+
+        contentCard.classList.add(
+            "active"
+        );
+
+        contentTitle.textContent =
+            "Something went wrong";
+
+        contentTopic.textContent =
+            "Academic AI Bot";
+
+        contentBody.innerHTML = `
+
+            <div class="error">
+                ⚠️ ${escapeHTML(message)}
+            </div>
+
+        `;
+
+        contentCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    function updatePracticeStatus(
+        message
+    ) {
+
+        const element =
+            document.getElementById(
+                "practiceStatus"
+            );
+
+        if (element) {
+            element.textContent =
+                message;
+        }
+
+    }
+
+
+    function resetSelect(
+        select,
+        placeholder
+    ) {
+
+        select.innerHTML =
+            `<option value="">
+                ${placeholder}
+            </option>`;
+
+    }
+
+
+    function escapeHTML(
+        value
+    ) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.textContent =
+            value;
+
+        return div.innerHTML;
+
+    }
+
+
+    function cleanSpeechText(
+        text
+    ) {
+
+        return text
+            .replace(
+                /[#*_`]/g,
+                ""
+            )
+            .replace(
+                /\[.*?\]/g,
+                ""
+            )
+            .replace(
+                /\n+/g,
+                ". "
+            );
+
+    }
+
+</script>
+
+
+<style>
+
+    @media print {
+
+        body {
+            background: white;
+        }
+
+        .header,
+        .hero,
+        .selection-card,
+        .actions {
+            display: none !important;
+        }
+
+        .container {
+            width: 100%;
+            padding: 0;
+        }
+
+        .content-card {
+            display: block !important;
+            border: none;
+            box-shadow: none;
+        }
+
+        .content-header {
+            border-bottom: 2px solid #000;
+        }
+
+        .answer {
+            font-size: 12pt;
+            line-height: 1.6;
+        }
+
+        .sources {
+            color: #000;
+        }
+
+    }
+
+</style>
+
+</body>
+
+</html>
