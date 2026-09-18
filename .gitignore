@@ -1,0 +1,13 @@
+.env
+venv/
+__pycache__/
+*.py[cod]
+academic.db
+.vscode/
+
+# Local/generated vector data
+vector_store/
+
+# Python tooling
+.pytest_cache/
+*.egg-info/
