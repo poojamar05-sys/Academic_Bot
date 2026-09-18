@@ -2,7 +2,6 @@
 venv/
 __pycache__/
 *.py[cod]
-academic.db
 .vscode/
 
 # Local/generated vector data

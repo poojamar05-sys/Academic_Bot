@@ -1,8 +1,10 @@
 import sqlite3
 import os
+import shutil
 import tempfile
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SOURCE_DB_PATH = os.path.join(BASE_DIR, "academic.db")
 DB_DIRECTORY = (
     tempfile.gettempdir()
     if os.getenv("VERCEL")
@@ -14,6 +16,15 @@ DB_PATH = os.path.join(
 )
 
 
+def prepare_database():
+    if (
+        os.getenv("VERCEL")
+        and os.path.exists(SOURCE_DB_PATH)
+        and not os.path.exists(DB_PATH)
+    ):
+        shutil.copyfile(SOURCE_DB_PATH, DB_PATH)
+
+
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -21,6 +32,7 @@ def get_connection():
 
 
 def init_database():
+    prepare_database()
     conn = get_connection()
     cursor = conn.cursor()
 
