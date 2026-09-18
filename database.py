@@ -5,15 +5,18 @@ import tempfile
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_DB_PATH = os.path.join(BASE_DIR, "academic.db")
-DB_DIRECTORY = (
-    tempfile.gettempdir()
-    if os.getenv("VERCEL")
-    else BASE_DIR
-)
-DB_PATH = os.path.join(
-    DB_DIRECTORY,
-    os.getenv("DATABASE_FILENAME", "academic.db")
-)
+if os.getenv("VERCEL") and os.path.exists(SOURCE_DB_PATH):
+    DB_PATH = SOURCE_DB_PATH
+else:
+    DB_DIRECTORY = (
+        tempfile.gettempdir()
+        if os.getenv("VERCEL")
+        else BASE_DIR
+    )
+    DB_PATH = os.path.join(
+        DB_DIRECTORY,
+        os.getenv("DATABASE_FILENAME", "academic.db")
+    )
 
 
 def prepare_database():
@@ -32,6 +35,9 @@ def get_connection():
 
 
 def init_database():
+    if os.getenv("VERCEL") and os.path.exists(SOURCE_DB_PATH):
+        return
+
     prepare_database()
     conn = get_connection()
     cursor = conn.cursor()
